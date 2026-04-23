@@ -10,21 +10,14 @@ int mkdirs(const char *path) {
     snprintf(tmp, sizeof(tmp), "%s", path);
 
     for (char *p = tmp + 1; *p; p++) {
-        if (*p == '/') {
+        if (ccdes_is_sep(*p)) {
+            char saved = *p;
             *p = '\0';
-#ifdef _WIN32
-            _mkdir(tmp);
-#else
-            mkdir(tmp, 0755);
-#endif
-            *p = '/';
+            CCDES_MKDIR(tmp);
+            *p = saved;
         }
     }
-#ifdef _WIN32
-    return _mkdir(tmp);
-#else
-    return mkdir(tmp, 0755);
-#endif
+    return CCDES_MKDIR(tmp);
 }
 
 /* ── Ensure parent directory of a file path exists ────────── */
@@ -32,9 +25,9 @@ int mkdirs(const char *path) {
 static void ensure_parent_dir(const char *filepath) {
     char dir[MAX_PATH_LEN];
     snprintf(dir, sizeof(dir), "%s", filepath);
-    char *last_slash = strrchr(dir, '/');
-    if (last_slash) {
-        *last_slash = '\0';
+    char *last = ccdes_last_sep(dir);
+    if (last) {
+        *last = '\0';
         mkdirs(dir);
     }
 }
