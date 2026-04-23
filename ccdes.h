@@ -5,6 +5,12 @@
 #ifndef CCDES_H
 #define CCDES_H
 
+/* Suppress MSVC warnings about fopen/sprintf etc. */
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#pragma warning(disable:4996)
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,6 +21,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <direct.h>
+#include <io.h>
 #else
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -22,6 +29,28 @@
 #endif
 
 #include <locale.h>
+
+/* ── Platform helpers ──────────────────────────────────────── */
+
+#ifdef _WIN32
+#define CCDES_MKDIR(p) _mkdir(p)
+#define CCDES_PATH_SEP '\\'
+#else
+#define CCDES_MKDIR(p) mkdir((p), 0755)
+#define CCDES_PATH_SEP '/'
+#endif
+
+static inline int ccdes_is_sep(char c) {
+    return c == '/' || c == '\\';
+}
+
+static inline char *ccdes_last_sep(char *s) {
+    char *a = strrchr(s, '/');
+    char *b = strrchr(s, '\\');
+    if (!a) return b;
+    if (!b) return a;
+    return (a > b) ? a : b;
+}
 
 #define CCDES_VERSION "2.0.0"
 #define MAX_URL       2048

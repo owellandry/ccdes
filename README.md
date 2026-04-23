@@ -13,40 +13,97 @@ A command-line tool written in C that downloads and reconstructs Next.js site bu
 - **Source map detection**: Checks for `.map` files to recover original source
 - **Build manifest**: Downloads `_buildManifest.js` for full route mapping
 - **Project skeleton**: Generates `package.json`, `next.config.js`, and analysis report
+- **Cross-platform**: Works on Linux, macOS, and Windows
 
 ## Requirements
 
 - GCC (or any C compiler)
 - libcurl development headers
 
-### Install dependencies
+---
+
+## Build Instructions
+
+### Linux (Ubuntu / Debian)
 
 ```bash
-# Ubuntu / Debian
 sudo apt-get install build-essential libcurl4-openssl-dev
-
-# macOS (Homebrew)
-brew install curl
-
-# Arch Linux
-sudo pacman -S curl
-
-# Windows (MSYS2)
-pacman -S mingw-w64-x86_64-curl
-```
-
-## Build
-
-```bash
 make
 ```
+
+### macOS (Homebrew)
+
+```bash
+brew install curl
+make
+```
+
+### Arch Linux
+
+```bash
+sudo pacman -S base-devel curl
+make
+```
+
+### Windows (MSYS2 — recommended)
+
+**Step 1: Install MSYS2**
+
+Download and install from [https://www.msys2.org/](https://www.msys2.org/)
+
+**Step 2: Open the MSYS2 MinGW64 terminal** (NOT the MSYS2 MSYS terminal)
+
+From the Start menu, open **"MSYS2 MinGW x64"**.
+
+**Step 3: Install the toolchain and libcurl**
+
+```bash
+pacman -Syu
+pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-curl make
+```
+
+**Step 4: Build**
+
+```bash
+cd /c/path/to/ccdes
+make
+```
+
+Or use the provided build script:
+
+```bash
+./build-msys2.sh
+```
+
+Or from CMD / PowerShell (after adding `C:\msys64\mingw64\bin` to your PATH):
+
+```cmd
+build-windows.bat
+```
+
+The result is a **ccdes.exe** that you can run from any terminal.
+
+### Windows (vcpkg + MSVC)
+
+If you prefer Visual Studio:
+
+```powershell
+vcpkg install curl:x64-windows
+cl /O2 /Fe:ccdes.exe main.c download.c parser.c reconstruct.c /I<vcpkg-include> /link /LIBPATH:<vcpkg-lib> libcurl.lib ws2_32.lib
+```
+
+---
 
 ## Usage
 
 ### Direct URL (recommended)
 
 ```bash
+# Linux / macOS
 ./ccdes https://example.com
+
+# Windows
+ccdes.exe https://example.com
 ```
 
 ### Interactive mode

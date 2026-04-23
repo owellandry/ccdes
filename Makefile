@@ -5,8 +5,10 @@ LDFLAGS = -lcurl
 ifeq ($(OS),Windows_NT)
     TARGET  = ccdes.exe
     LDFLAGS += -lws2_32
+    RM = del /Q
 else
     TARGET  = ccdes
+    RM = rm -f
 endif
 
 SRCS = main.c download.c parser.c reconstruct.c
@@ -21,7 +23,7 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	$(RM) $(OBJS) $(TARGET) ccdes.exe
 
 test: $(TARGET)
 	./$(TARGET) --test

@@ -151,7 +151,7 @@ static void analyse_local_file(const char *filepath) {
             snprintf(out_name, sizeof(out_name), "beautified_%s", filepath);
             /* Replace path separators */
             for (char *p = out_name; *p; p++)
-                if (*p == '/') *p = '_';
+                if (ccdes_is_sep(*p)) *p = '_';
 
             FILE *out = fopen(out_name, "wb");
             if (out) {
